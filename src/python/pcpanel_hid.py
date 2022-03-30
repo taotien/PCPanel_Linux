@@ -25,8 +25,11 @@ def pactl_sinks_dict():
         outval = pactl.communicate()[0].decode('utf-8')
         lines = [i.strip() for i in outval.splitlines() if 'Sink Input' in i or 'application.name' in i]
         sinks = {'Firefox': [], 'Discord': []}
-        for i in range(int(len(lines)/2)):
-            sinks[lines[i*2+1].strip('application.name = "').strip('"')].append(int(lines[i*2].strip('Sink Input #')))
+        try:
+            for i in range(int(len(lines)/2)):
+                sinks[lines[i*2+1].strip('application.name = "').strip('"')].append(int(lines[i*2].strip('Sink Input #')))
+        except KeyError:
+            pass
         _pactl_sinks_dict_fresh = True
 
     _pactl_sinks = sinks
