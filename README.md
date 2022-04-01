@@ -23,8 +23,18 @@ data over HID, like:
 
 ## TODO
 
+- actually handle exceptions
+- make pactl list call own func with opt name or application
+- wayland and pipewire, currently only x and pulseaudio
 - RGB (OpenRGB)
 - GUI
+- check out pacmd options
+- daemonize?
+- this gets active window
+  - xdotool getactivewindow | xargs xwininfo -id
+  - figure if x window name doesn't match pa names, do fuzzy?
+- fork/exec?
+- change Popen to check_output and catch exceptions
 
 ## Depends
 
