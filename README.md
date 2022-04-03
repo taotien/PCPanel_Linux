@@ -35,6 +35,9 @@ data over HID, like:
   - figure if x window name doesn't match pa names, do fuzzy?
 - fork/exec?
 - change Popen to check_output and catch exceptions
+- OBS integration and other feature parity
+- non-pro pcpanels
+- multiple pcpanels
 
 ## Depends
 
@@ -43,4 +46,6 @@ data over HID, like:
 
 ## Issues
 
-- On my system, adjusting volume causes certain media to fast forward a frame?
+- On my system, adjusting volume causes certain media (firefox) to fast forward
+  a frame?
+

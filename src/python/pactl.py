@@ -2,16 +2,24 @@ import subprocess
 from collections import defaultdict
 
 def list_sink_inputs(option='a'):
+    """
+    TODO
+    - is limiting calls to this necessary
+    """
     arg = 'media.name' if option=='m' else 'application.name'
     try:
         pactl = subprocess.check_output(['pactl', 'list', 'sink-inputs']).decode('utf-8')
     except subprocess.CalledProcessError as ex:
+        raise
         return
+
     lines = [i.strip() for i in pactl.splitlines() if 'Sink Input' in i or arg in i]
+
     if option == 'm':
         names = [i[14:-1] for i in lines[1::2]]
     else:
         names = [i[20:-1] for i in lines[1::2]]
+        
     nums = [i[12:] for i in lines[::2]]
     return names, nums
 
@@ -36,7 +44,7 @@ def dict_apps():
 
 
 def set_sink_input_vol(sink, vol):
-    return subprocess.call(['pactl', 'set-sink-input-volume', sink, str(vol)+'%'])
+    subprocess.call(['pactl', 'set-sink-input-volume', sink, str(vol)+'%'])
     
 
 def set_sink_default_mute(action):
@@ -60,22 +68,18 @@ def set_active_sink_input_vol(vol):
         win_id = subprocess.check_output(['xdotool', 'getactivewindow']).decode('utf-8')
         win_info = subprocess.check_output(['xwininfo', '-id', win_id]).decode('utf-8')
     except subprocess.CalledProcessError as ex:
+        raise
         return
     
     win_name = win_info.splitlines()[1][32:-1]
     try:
         win_name = win_name[:win_name.rindex(' — ')]
     except ValueError as ex:
-        pass
-    print(win_name)
+        raise
     
     names, nums = list_sink_inputs('m')
-    print(names)
-    ret = 1
     try:
         i = names.index(win_name)
     except ValueError as ex:
-        pass
-    ret = set_sink_input_vol(nums[i], vol)
-
-    return ret
+        raise
+    set_sink_input_vol(nums[i], vol)
