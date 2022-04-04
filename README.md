@@ -23,6 +23,10 @@ data over HID, like:
 
 ## TODO
 
+- PipeWire!!!
+
+- maybe create fake pulseaudio devices to get around volume control conflicts
+- background polling to constantly set volume?
 - actually handle exceptions
 - make pactl list call own func with opt name or application
 - wayland and pipewire, currently only x and pulseaudio
@@ -38,14 +42,31 @@ data over HID, like:
 - OBS integration and other feature parity
 - non-pro pcpanels
 - multiple pcpanels
+- investigate error on close
+- media controls
+
+```shell
+python3: /var/tmp/portage/dev-libs/libusb-1.0.25/work/libusb-1.0.25/libusb/os/threads_posix.h:46: usbi_mutex_lock: Assertion `pthread_mutex_lock(mutex) == 0' failed.
+fish: Job 1, './main.py' terminated by signal SIGABRT (Abort)
+```
+Seems to be because I'm using ctrl-c to stop the loop, terminating from a
+process manager avoids it. Doesn't seem to have any real consequences
 
 ## Depends
 
 - PulseAudio
 - hidapi
 
-## Issues
+## Known Issues
 
-- On my system, adjusting volume causes certain media (firefox) to fast forward
-  a frame?
+- volume adjustment causes glitches like crackling and/or fast forwarding
 
+Done further research, this seems to be a PulseAudio issue? Also, effect differs
+based on `resample-method` set in `/etc/pulse/daemon.conf`. soxr-vhq causes the
+ff, speex-float-10 only crackles. [pulseaudio gitlab](https://gitlab.freedesktop.org/pulseaudio/pulseaudio/-/issues/981)
+
+- certain applications don't report the same things for audio and window name,
+  thus we are unable to be detected for the active window feature
+
+- YouTube's player volume conflicts with app volume, and overrides it causing
+  it to be suddenly loud when playback changes

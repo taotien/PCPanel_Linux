@@ -3,8 +3,10 @@ from collections import defaultdict
 
 def list_sink_inputs(option='a'):
     """
+    List either application or media names by calling `pactl list sink-inputs`
+
     TODO
-    - is limiting calls to this necessary
+    - check if limiting calls to this necessary
     """
     arg = 'media.name' if option=='m' else 'application.name'
     try:
@@ -14,16 +16,16 @@ def list_sink_inputs(option='a'):
         return
 
     lines = [i.strip() for i in pactl.splitlines() if 'Sink Input' in i or arg in i]
-
+    
     if option == 'm':
         names = [i[14:-1] for i in lines[1::2]]
     else:
         names = [i[20:-1] for i in lines[1::2]]
-        
-    nums = [i[12:] for i in lines[::2]]
-    return names, nums
-
     
+    nums = [i[12:] for i in lines[::2]]
+    return names, nums    
+
+
 def dict_apps():
     """
     Returns a defaultdict of application names for keys and sink numbers for
@@ -43,11 +45,22 @@ def dict_apps():
     return sinks
 
 
-def set_sink_input_vol(sink, vol):
+def sink_input_vol(sink, vol):
     subprocess.call(['pactl', 'set-sink-input-volume', sink, str(vol)+'%'])
     
+    
+def sink_input_mute(sink, action = 'toggle'):
+    action = ('0' if action == False else
+              '1' if action == True else
+              'toggle'
+              )
+    subprocess.call(['pactl', 'set-sink-input-mute', sink, action])
 
-def set_sink_default_mute(action):
+
+def sink_default_mute(action = 'toggle'):
+    """
+    Mute default playback device
+    """
     action = ('0' if action == False else
               '1' if action == True else
               'toggle'
@@ -55,7 +68,10 @@ def set_sink_default_mute(action):
     subprocess.Popen(['pactl', 'set-sink-mute', '@DEFAULT_SINK@', action])
 
 
-def set_source_default_mute(action):
+def source_default_mute(action = 'toggle'):
+    """
+    Mute default recording device
+    """
     action = ('0' if action == False else
               '1' if action == True else
               'toggle'
@@ -63,7 +79,11 @@ def set_source_default_mute(action):
     subprocess.Popen(['pactl', 'set-source-mute', '@DEFAULT_SOURCE@', action])
     
 
-def set_active_sink_input_vol(vol):
+def active_sink_input_vol(vol):
+    """
+    TODO
+    - find method not reliant on X, or maybe do "adjust all not bound"
+    """
     try:
         win_id = subprocess.check_output(['xdotool', 'getactivewindow']).decode('utf-8')
         win_info = subprocess.check_output(['xwininfo', '-id', win_id]).decode('utf-8')
@@ -72,14 +92,10 @@ def set_active_sink_input_vol(vol):
         return
     
     win_name = win_info.splitlines()[1][32:-1]
-    try:
-        win_name = win_name[:win_name.rindex(' — ')]
-    except ValueError as ex:
-        raise
-    
     names, nums = list_sink_inputs('m')
     try:
         i = names.index(win_name)
-    except ValueError as ex:
-        raise
-    set_sink_input_vol(nums[i], vol)
+    except ValueError:
+        return
+
+    sink_input_vol(nums[i], vol)
