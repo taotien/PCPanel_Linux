@@ -3,24 +3,24 @@ import pactl
 from collections import defaultdict
 
 class PCPanel:
-    def __init__(self):
+    def __init__(self, inputs = {}):
         self.pcpanel = hid.device()
         self.pcpanel.open(0x0483,0xa3c5)
         self.pcpanel.set_nonblocking(1)
-        self.K1 = input() 
-        self.B1 = input() 
-        self.K2 = input() 
-        self.B2 = input() 
-        self.K3 = input() 
-        self.B3 = input(default_source=True) 
-        self.K4 = input() 
-        self.B4 = input() 
-        self.K5 = input() 
-        self.B5 = input() 
-        self.S1 = input(['WEBRTC VoiceEngine']) 
-        self.S2 = input(['Firefox']) 
-        self.S3 = input(['mpv', 'cmus']) 
-        self.S4 = input(['java'], active = True) 
+        self.K1 = input(*inputs.get('K1', None)) 
+        self.B1 = input(*inputs.get('B1', None)) 
+        self.K2 = input(*inputs.get('K2', None)) 
+        self.B2 = input(*inputs.get('B2', None)) 
+        self.K3 = input(*inputs.get('K3', None)) 
+        self.B3 = input(*inputs.get('B3', None)) 
+        self.K4 = input(*inputs.get('K4', None)) 
+        self.B4 = input(*inputs.get('B4', None)) 
+        self.K5 = input(*inputs.get('K5', None)) 
+        self.B5 = input(*inputs.get('B5', None)) 
+        self.S1 = input(*inputs.get('S1', None)) 
+        self.S2 = input(*inputs.get('S2', None)) 
+        self.S3 = input(*inputs.get('S3', None)) 
+        self.S4 = input(*inputs.get('S3', None)) 
         self.widgets = {
                 1: {0: self.K1,
                     1: self.K2,
