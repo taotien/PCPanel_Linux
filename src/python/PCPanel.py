@@ -20,7 +20,7 @@ class PCPanel:
         self.S1 = input(*inputs.get('S1', None)) 
         self.S2 = input(*inputs.get('S2', None)) 
         self.S3 = input(*inputs.get('S3', None)) 
-        self.S4 = input(*inputs.get('S3', None)) 
+        self.S4 = input(*inputs.get('S4', None)) 
         self.widgets = {
                 1: {0: self.K1,
                     1: self.K2,
